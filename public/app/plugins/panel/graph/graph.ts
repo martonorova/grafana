@@ -418,6 +418,34 @@ class GraphElement {
         series.data = [];
         series.stack = false;
       }
+
+      // RECALCULATE STATS
+
+      let currentTime;
+      let currentValue;
+
+      const from = _.isUndefined(this.ctrl.range.from) ? null : this.ctrl.range.from.valueOf();
+      const to = _.isUndefined(this.ctrl.range.to) ? null : this.ctrl.range.to.valueOf();
+
+      if (this.panel.xaxis.mode === 'series') {
+        for (let j = 0; j < data.length; j++) {
+          const series = data[j];
+          series.stats.total = 0;
+
+          for (let k = 0; k < series.datapoints.length; k++) {
+            currentValue = series.datapoints[k][0];
+            currentTime = series.datapoints[k][1];
+
+            // console.log('currentTime: ' + currentTime + ' from: ' + from + ' to: ' + to);
+
+            if (currentTime >= from && currentTime <= to && currentValue !== null) {
+              if (_.isNumber(currentValue)) {
+                series.stats.total += currentValue;
+              }
+            }
+          }
+        }
+      }
     }
   }
 
